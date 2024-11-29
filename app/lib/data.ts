@@ -35,18 +35,19 @@ export async function fetchRevenue() {
 
 export async function fetchLatestInvoices() {
   await new Promise((resolve, reject) => setTimeout(() => resolve(null), 2000))
-
+  const limit = Math.floor(Math.random() * 5) + 1
   try {
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
       ORDER BY invoices.date DESC
-      LIMIT ${Math.floor(Math.random() * 5) + 1}`;
+      LIMIT ${limit}`;
 
     const latestInvoices = data.rows.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
+      limit
     }));
     return latestInvoices;
   } catch (error) {
